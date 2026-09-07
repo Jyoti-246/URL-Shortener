@@ -1,8 +1,36 @@
 const { nanoid } = require("nanoid");
+const dns = require("dns").promises;
 const Url = require("../models/Url");
 
 const BASE_URL =
   process.env.BASE_URL || `http://localhost:${process.env.PORT || 5000}`;
+
+const isValidUrl = (value) => {
+  try {
+    const url = new URL(value);
+
+    if (!["http:", "https:"].includes(url.protocol)) {
+      return false;
+    }
+
+    if (!url.hostname) {
+      return false;
+    }
+
+    if (
+      !url.hostname.includes(".") ||
+      url.hostname.startsWith(".") ||
+      url.hostname.endsWith(".") ||
+      url.hostname.includes("..")
+    ) {
+      return false;
+    }
+
+    return true;
+  } catch {
+    return false;
+  }
+};
 
 const shortenUrl = async (req, res) => {
   try {
@@ -16,23 +44,30 @@ const shortenUrl = async (req, res) => {
 
     originalUrl = originalUrl.trim();
 
+    // Add https:// if user doesn't provide protocol
     if (!/^https?:\/\//i.test(originalUrl)) {
       originalUrl = `https://${originalUrl}`;
     }
 
-    try {
-      const parsedUrl = new URL(originalUrl);
-
-      // Must have a hostname with a domain extension
-      if (!parsedUrl.hostname.includes(".")) {
-        throw new Error("Invalid domain");
-      }
-    } catch {
+    // Basic URL validation
+    if (!isValidUrl(originalUrl)) {
       return res.status(400).json({
         message: "Please provide a valid URL",
       });
     }
 
+    // Check whether domain resolves
+    const parsedUrl = new URL(originalUrl);
+
+    try {
+      await dns.lookup(parsedUrl.hostname);
+    } catch {
+      return res.status(400).json({
+        message: "This website does not exist",
+      });
+    }
+
+    // Check if URL already exists
     const existingUrl = await Url.findOne({ originalUrl });
 
     if (existingUrl) {
@@ -43,6 +78,7 @@ const shortenUrl = async (req, res) => {
       });
     }
 
+    // Generate short code
     const shortCode = nanoid(7);
 
     const newUrl = await Url.create({
@@ -68,11 +104,7 @@ const redirectUrl = async (req, res) => {
   try {
     const { shortCode } = req.params;
 
-    console.log("Received shortCode:", shortCode);
-
     const url = await Url.findOne({ shortCode });
-
-    console.log("Database result:", url);
 
     if (!url) {
       return res.status(404).json({

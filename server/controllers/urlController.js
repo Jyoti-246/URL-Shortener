@@ -21,7 +21,12 @@ const shortenUrl = async (req, res) => {
     }
 
     try {
-      new URL(originalUrl);
+      const parsedUrl = new URL(originalUrl);
+
+      // Must have a hostname with a domain extension
+      if (!parsedUrl.hostname.includes(".")) {
+        throw new Error("Invalid domain");
+      }
     } catch {
       return res.status(400).json({
         message: "Please provide a valid URL",

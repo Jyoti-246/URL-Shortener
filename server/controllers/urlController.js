@@ -6,7 +6,7 @@ const BASE_URL =
 
 const shortenUrl = async (req, res) => {
   try {
-    const { originalUrl } = req.body;
+    let { originalUrl } = req.body;
 
     if (!originalUrl) {
       return res.status(400).json({

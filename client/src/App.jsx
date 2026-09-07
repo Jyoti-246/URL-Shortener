@@ -156,13 +156,6 @@ function App() {
               >
                 {copied === shortUrl ? "✓ Copied" : "Copy"}
               </button>
-
-              <button
-                className="delete-button"
-                onClick={() => handleDelete(item._id)}
-              >
-                Delete
-              </button>
             </div>
           )}
         </section>
@@ -235,6 +228,12 @@ function App() {
                         onClick={() => copyToClipboard(itemShortUrl)}
                       >
                         {copied === itemShortUrl ? "✓" : "Copy"}
+                      </button>
+                      <button
+                        className="delete-button"
+                        onClick={() => handleDelete(item._id)}
+                      >
+                        Delete
                       </button>
                     </div>
                   </div>

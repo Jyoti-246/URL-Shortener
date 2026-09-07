@@ -1,5 +1,5 @@
 const { nanoid } = require("nanoid");
-const dns = require("dns").promises;
+const axios = require("axios");
 const Url = require("../models/Url");
 
 const BASE_URL =
@@ -13,12 +13,11 @@ const isValidUrl = (value) => {
       return false;
     }
 
-    if (!url.hostname) {
+    if (!url.hostname.includes(".")) {
       return false;
     }
 
     if (
-      !url.hostname.includes(".") ||
       url.hostname.startsWith(".") ||
       url.hostname.endsWith(".") ||
       url.hostname.includes("..")
@@ -44,26 +43,28 @@ const shortenUrl = async (req, res) => {
 
     originalUrl = originalUrl.trim();
 
-    // Add https:// if user doesn't provide protocol
+    // Add https:// if protocol is missing
     if (!/^https?:\/\//i.test(originalUrl)) {
       originalUrl = `https://${originalUrl}`;
     }
 
-    // Basic URL validation
+    // Validate URL format
     if (!isValidUrl(originalUrl)) {
       return res.status(400).json({
         message: "Please provide a valid URL",
       });
     }
 
-    // Check whether domain resolves
-    const parsedUrl = new URL(originalUrl);
-
+    // Check if the actual website responds
     try {
-      await dns.lookup(parsedUrl.hostname);
-    } catch {
+      await axios.get(originalUrl, {
+        timeout: 5000,
+        maxRedirects: 5,
+        validateStatus: (status) => status < 500,
+      });
+    } catch (error) {
       return res.status(400).json({
-        message: "This website does not exist",
+        message: "This website is not reachable",
       });
     }
 

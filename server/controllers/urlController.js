@@ -14,6 +14,10 @@ const shortenUrl = async (req, res) => {
       });
     }
 
+    if (!/^https?:\/\//i.test(originalUrl)) {
+      originalUrl = `https://${originalUrl}`;
+    }
+
     try {
       new URL(originalUrl);
     } catch {

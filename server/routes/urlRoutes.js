@@ -1,5 +1,9 @@
 const express = require("express");
-const { shortenUrl, getAllUrls } = require("../controllers/urlController");
+const {
+  shortenUrl,
+  getAllUrls,
+  deleteUrl,
+} = require("../controllers/urlController");
 
 const router = express.Router();
 
@@ -12,5 +16,7 @@ router.get("/test", (req, res) => {
     message: "URL routes are working",
   });
 });
+
+router.delete("/:id", deleteUrl);
 
 module.exports = router;

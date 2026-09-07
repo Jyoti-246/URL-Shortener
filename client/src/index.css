@@ -324,6 +324,21 @@ button {
   background: #eff6ff;
 }
 
+.delete-button {
+  border: none;
+  background: #fee2e2;
+  color: #dc2626;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.delete-button:hover {
+  background: #fecaca;
+}
+
 /* =========================
    HISTORY CARD
 ========================= */

@@ -82,6 +82,20 @@ function App() {
     });
   };
 
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(
+        `https://url-shortener-zi5d.onrender.com/api/urls/${id}`,
+      );
+
+      setUrls((prevUrls) => prevUrls.filter((item) => item._id !== id));
+    } catch (error) {
+      console.error("Delete failed:", error);
+
+      setError(error.response?.data?.message || "Failed to delete URL");
+    }
+  };
+
   return (
     <div className="app">
       <div className="background-circle circle-one"></div>
@@ -141,6 +155,13 @@ function App() {
                 onClick={() => copyToClipboard(shortUrl)}
               >
                 {copied === shortUrl ? "✓ Copied" : "Copy"}
+              </button>
+
+              <button
+                className="delete-button"
+                onClick={() => handleDelete(item._id)}
+              >
+                Delete
               </button>
             </div>
           )}

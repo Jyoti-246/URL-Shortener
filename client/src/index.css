@@ -305,6 +305,11 @@ button {
   word-break: break-all;
 }
 
+.actions {
+  display: flex;
+  gap: 4px;
+}
+
 .copy-button {
   border: 1px solid #cbdaf7;
 

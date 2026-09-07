@@ -3,6 +3,8 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 require("dotenv").config();
 
+console.log("MONGO_URI exists:", !!process.env.MONGO_URL);
+
 const urlRoutes = require("./routes/urlRoutes");
 const { redirectUrl } = require("./controllers/urlController");
 

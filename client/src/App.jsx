@@ -107,7 +107,7 @@ function App() {
               <span className="input-icon">🔗</span>
 
               <input
-                type="url"
+                type="text"
                 placeholder="Enter your long URL..."
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}

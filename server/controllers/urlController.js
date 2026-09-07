@@ -1,6 +1,9 @@
 const { nanoid } = require("nanoid");
 const Url = require("../models/Url");
 
+const BASE_URL =
+  process.env.BASE_URL || `http://localhost:${process.env.PORT || 5000}`;
+
 const shortenUrl = async (req, res) => {
   try {
     const { originalUrl } = req.body;
@@ -24,7 +27,7 @@ const shortenUrl = async (req, res) => {
     if (existingUrl) {
       return res.status(200).json({
         message: "URL already shortened",
-        shortUrl: `http://localhost:5000/${existingUrl.shortCode}`,
+        shortUrl: `${BASE_URL}/${existingUrl.shortCode}`,
         data: existingUrl,
       });
     }
@@ -38,7 +41,7 @@ const shortenUrl = async (req, res) => {
 
     res.status(201).json({
       message: "URL shortened successfully",
-      shortUrl: `http://localhost:5000/${shortCode}`,
+      shortUrl: `${BASE_URL}/${shortCode}`,
       data: newUrl,
     });
   } catch (error) {

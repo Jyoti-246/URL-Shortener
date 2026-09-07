@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+const API_URL = "https://url-shortener-zi5d.onrender.com";
+
 function App() {
   const [url, setUrl] = useState("");
   const [shortUrl, setShortUrl] = useState("");
@@ -11,7 +13,7 @@ function App() {
 
   const fetchUrls = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/urls");
+      const response = await axios.get(`${API_URL}/api/urls`);
 
       setUrls(response.data.data);
     } catch (error) {
@@ -36,12 +38,9 @@ function App() {
       setError("");
       setShortUrl("");
 
-      const response = await axios.post(
-        "http://localhost:5000/api/urls/shorten",
-        {
-          originalUrl: url,
-        },
-      );
+      const response = await axios.post(`${API_URL}/api/urls/shorten`, {
+        originalUrl: url,
+      });
 
       setShortUrl(response.data.shortUrl);
       setUrl("");
@@ -72,7 +71,7 @@ function App() {
   };
 
   const getShortUrl = (shortCode) => {
-    return `http://localhost:5000/${shortCode}`;
+    return `${API_URL}/${shortCode}`;
   };
 
   const formatDate = (date) => {
